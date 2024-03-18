@@ -8,9 +8,9 @@ import {
     serverTimestamp,
 } from 'firebase/firestore';
 
-import { USER_COLLECTION, UID } from "@/constants/general.constants";
+import { USER_COLLECTION} from "@/constants/general.constants";
 
-export const createData = async (data: string[], setCreated: any) => {
+export const createData = async (data: string[], setCreated: any , UID : any) => {
     try {
         const newUser = {
             to_Do_Data: data,
@@ -33,7 +33,7 @@ export const createData = async (data: string[], setCreated: any) => {
     }
 }
 
-export const updateData = async (oldContent: string, updatedContent: string, setUpdated: any) => {
+export const updateData = async (oldContent: string, updatedContent: string, setUpdated: any,UID : any) => {
     try {
         const docRef = doc(db, USER_COLLECTION, UID);
 
@@ -63,7 +63,7 @@ export const updateData = async (oldContent: string, updatedContent: string, set
     }
 }
 
-export const deleteData = async (oldContent: string, setDeleted: any) => {
+export const deleteData = async (oldContent: string, setDeleted: any , UID : any) => {
     try {
         const docRef = doc(db, USER_COLLECTION, UID);
         const docSnap = await getDoc(docRef);

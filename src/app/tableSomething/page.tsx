@@ -19,6 +19,7 @@ const TableSomething = () => {
   const [isDeleted, setDeleted] = useState(false);
   const [isCreated, setCreated] = useState(false);
   const [isUpdated, setUpdated] = useState(false);
+  const [firebaseUID, setFirebaseUID] = useState<string | null>(null);
 
   const columns = [
     {
@@ -81,6 +82,22 @@ const TableSomething = () => {
     fetchTodosFromLocalStorage();
   }, []);
 
+  useEffect(() => {
+    const fetchFirebaseUID = async () => {
+      try {
+        const response = await fetch('/api/fetchuid');
+        const data = await response.json();
+        if (data && data.FIREBASE_UID) {
+          setFirebaseUID(data.FIREBASE_UID);
+        }
+      } catch (error) {
+        console.error('Error fetching Firebase UID:', error);
+      }
+    }
+
+    fetchFirebaseUID();
+  }, []);
+
   const fetchTodosFromLocalStorage = () => {
     const fetchTodDosLocal = localStorage.getItem("usersTodo");
     if (fetchTodDosLocal) {
@@ -101,7 +118,7 @@ const TableSomething = () => {
   const deleteToDo = async (index: string) => {
     const indexx = parseInt(index);
     const oldValue = dataSource[indexx].to_do_list;
-    await deleteData(oldValue, setDeleted);
+    await deleteData(oldValue, setDeleted , firebaseUID);
   };
 
   const showModal = () => {
@@ -131,14 +148,14 @@ const TableSomething = () => {
 
       const index = parseInt(editIndex);
       const oldValue = dataSource[index].to_do_list;
-      const res = await updateData(oldValue, editValue , setUpdated);
+      const res = await updateData(oldValue, editValue , setUpdated , firebaseUID);
       if (!res) return;
       handleCancel();
 
     } else {
       const newArray = [...addToDoArray, newToDo];
       setToDoArray(newArray);
-      const res = await createData(newArray , setCreated);
+      const res = await createData(newArray , setCreated , firebaseUID);
       if (!res) return;
 
       setNewToDo("");
