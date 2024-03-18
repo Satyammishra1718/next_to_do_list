@@ -1,0 +1,30 @@
+.main {
+    box-sizing: border-box;
+
+    .buttonWrap {
+        background-color: lightblue;
+        color: black;
+        padding: 5px;
+        margin: 0 auto;
+
+        button {
+            margin-bottom: 0.5rem;
+            margin-top: 0.5rem;
+            margin: 0 auto;
+            border-radius: 0.4rem;
+            padding: 0.3rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+
+            &:hover{
+                transform: scale(1.03);
+            }
+        }
+    }
+}
+
+.buttonStyles{
+     border-radius: 1rem;
+     padding: 0.2rem 0.5rem;
+}
