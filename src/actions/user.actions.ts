@@ -9,8 +9,9 @@ import {
 } from 'firebase/firestore';
 
 import { USER_COLLECTION} from "@/constants/general.constants";
+import { setLocalStorage , fetchLocalStorage} from "../helpers";
 
-export const createData = async (data: string[], setCreated: any , UID : any) => {
+export const createData = async (data: string[], UID : any) => {
     try {
         const newUser = {
             to_Do_Data: data,
@@ -20,20 +21,19 @@ export const createData = async (data: string[], setCreated: any , UID : any) =>
         const userDocRef = doc(db, USER_COLLECTION, UID);
         await setDoc(userDocRef, newUser);
 
-        const existingTodosJson = localStorage.getItem("usersTodo");
+        const existingTodosJson = fetchLocalStorage("usersTodo");
         const existingTodos = existingTodosJson ? JSON.parse(existingTodosJson) : {};
         existingTodos.uid = UID;
         existingTodos.toDos = data;
 
-        localStorage.setItem("usersTodo", JSON.stringify(existingTodos))
-        setCreated((a: any) => !a);
+        setLocalStorage("usersTodo", JSON.stringify(existingTodos))
         return newUser;
     } catch (error: any) {
         return false;
     }
 }
 
-export const updateData = async (oldContent: string, updatedContent: string, setUpdated: any,UID : any) => {
+export const updateData = async (oldContent: string, updatedContent: string,UID : any) => {
     try {
         const docRef = doc(db, USER_COLLECTION, UID);
 
@@ -50,20 +50,19 @@ export const updateData = async (oldContent: string, updatedContent: string, set
             to_Do_Data: currentList,
         });
 
-        const existingTodosJson = localStorage.getItem("usersTodo");
+        const existingTodosJson = fetchLocalStorage("usersTodo");
         const existingTodos = existingTodosJson ? JSON.parse(existingTodosJson) : {};
         const arrayToDos = existingTodos.toDos;
         arrayToDos[toBeUpdatedIndex] = updatedContent;
 
-        localStorage.setItem("usersTodo", JSON.stringify({ ...existingTodos, toDos: arrayToDos }));
-        setUpdated((a: any) => !a);
+        setLocalStorage("usersTodo", JSON.stringify({  toDos: arrayToDos }));
         return true;
     } catch (error: any) {
         return false;
     }
 }
 
-export const deleteData = async (oldContent: string, setDeleted: any , UID : any) => {
+export const deleteData = async (oldContent: string, UID : any) => {
     try {
         const docRef = doc(db, USER_COLLECTION, UID);
         const docSnap = await getDoc(docRef);
@@ -80,7 +79,7 @@ export const deleteData = async (oldContent: string, setDeleted: any , UID : any
             await updateDoc(docRef, { to_Do_Data: toDoList });
         }
 
-        const existingTodosJson = localStorage.getItem("usersTodo");
+        const existingTodosJson = fetchLocalStorage("usersTodo");
         const existingTodos = existingTodosJson ? JSON.parse(existingTodosJson) : {};
         const arrayToDos = existingTodos.toDos;
 
@@ -88,8 +87,7 @@ export const deleteData = async (oldContent: string, setDeleted: any , UID : any
             arrayToDos.splice(toBeDeletedIndex, 1);
         }
 
-        localStorage.setItem("usersTodo", JSON.stringify({ ...existingTodos, toDos: arrayToDos }))
-        setDeleted((a: any) => !a);
+        setLocalStorage("usersTodo", JSON.stringify({  toDos: arrayToDos }))
         return true;
     } catch (error: any) {
         return false;
